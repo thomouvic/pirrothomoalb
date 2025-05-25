@@ -1,0 +1,176 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="sq">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pirro Thomo - Trashëgimia Arkitekturore</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    section {
+      margin-bottom: 4rem;
+    }
+    ol {
+      padding-left: 2rem;
+    }
+    li {
+      margin-bottom: 1rem;
+      line-height: 1.6;
+    }
+    .highlight {
+      font-weight: 600;
+      color: #1e40af;
+    }
+  </style>
+</head>
+<body class="bg-gray-50">
+  <!-- Header -->
+  <header class="bg-blue-800 text-white py-12">
+    <div class="max-w-6xl mx-auto px-6 text-center">
+      <img src="pirro-thomo.png" alt="Pirro Thomo" class="w-48 h-48 rounded-full mx-auto mb-6 object-cover">
+      <h1 class="text-5xl font-bold">Pirro Thomo</h1>
+      <p class="mt-4 text-xl">Arkitekt, Studiues dhe Ruajtës i Trashëgimisë Kulturore</p>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-6xl mx-auto px-6 py-10">
+    <!-- Scholarly Works -->
+    <section>
+      <h2 class="text-3xl font-semibold text-blue-800 mb-6">Veprimtaria Studimore-Shkencore dhe Botuese</h2>
+      <ol class="text-gray-700">
+        <li>Studime për <span class="highlight">gjurmimin, vlerësimin dhe vënien në mbrojtje të monumenteve të kulturës</span> (<span class="highlight">banesa qytetare e fshatare, ansamble dhe Qendra Historike, kisha bizantine dhe pasbizantine</span>)</li>
+        <li>Kapitujt “<span class="highlight">Arkitektura e Greqisë së Vjetër</span>” dhe “<span class="highlight">Arkitektura e Bizantit</span>” të tekstit mësimor universitar <i>Historia e Arkitekturës</i>, <span class="highlight">1973</span></li>
+        <li><i><span class="highlight">Historia e arkitekturës në Shqipëri</span></i> (bashkautor), <span class="highlight">1979, 2016</span>, Ribotim i përmirësuar</li>
+        <li><i><span class="highlight">Banesa fshatare e Shqipërisë së Veriut</span></i>, <span class="highlight">1981, 2021</span>, Ribotim i përmirësuar</li>
+        <li><i><span class="highlight">Korça, Urbanistika dhe Arkitektura</span></i>, <span class="highlight">1988, 2012, 2022</span>, Ribotime të përmirësuara</li>
+        <li>Monografia “<span class="highlight">Albanie</span>” të volumit <i>Architecture Traditionnelle des Pays Balkaniques</i>, <span class="highlight">Athine, 1990</span>, (bashkautor)</li>
+        <li>Kryeredaktor i korpusit <i><span class="highlight">Vendbanime dhe Banesa Popullore Shqiptare</span></i>, Vol. I, <span class="highlight">Tiranë, 2004</span></li>
+        <li><i><span class="highlight">Kishat Pasbizantine në Shqipërin</span></i>, <span class="highlight">1998, 2023</span>, Ribotim i përmirësuar</li>
+        <li><i><span class="highlight">Restaurimi i Monumenteve të Kishës Orthodhokse në Shqipëri</span></i>, <span class="highlight">Tiranë, 2005</span></li>
+        <li><i><span class="highlight">Multilingual Illustrated Dictionary of Byzantine Architecture and Sculpture Terminology</span></i>, <span class="highlight">Crete University Press, Herakleion, 2010</span>, (bashkautor)</li>
+        <li><i><span class="highlight">Përmbledhje studimesh e kumtesash</span></i>, <span class="highlight">Tiranë, 2020</span></li>
+        <li><i><span class="highlight">Praktika Vlerësimi të Monumenteve</span></i>, <span class="highlight">Tiranë, 2024</span></li>
+        <li>Mbi <span class="highlight">60 artikuj</span> të botuara në shtypin shkencor në <span class="highlight">Shqipëri</span> (<i>Studime Historike</i>, <i>Monumentet</i>, <i>Kultura Popullore</i>, <i>Etnografia Shqiptare</i>, <i>Studia Albanica</i>) dhe jashtë (<i>Δελτίον του Ευρωπαϊκού Κέντρου Βυζαντινών και Μεταβυζαντινών Μνημείων (ΕΚΒΜΜ)</i>, <i>Μνημεία και Περιβάλλον</i>) mbi <span class="highlight">arkitekturën popullore, bizantine dhe pasbizantine, restaurimin</span>, etj.</li>
+      </ol>
+    </section>
+
+    <!-- Symposium Participations -->
+    <section>
+      <h2 class="text-3xl font-semibold text-blue-800 mb-6">Pjesëmarrja në Simpoziume</h2>
+      <p class="text-gray-700 mb-4">Pjesëmarrje me kumtesa shkencore në shumë simpoziume kombëtare dhe ndërkombëtare, nga të cilat më kryesoret janë:</p>
+      <ol class="text-gray-700">
+        <li><span class="highlight">ICOMOS</span>, Simpozium “Mbi <span class="highlight">rigjallërimin e Qendrave Historike dhe mbi tipologjinë e arkitekturës Popullore</span>”, <span class="highlight">Selanik-Kostur</span>, <span class="highlight">3-10 tetor 1973</span></li>
+        <li>Symposion “<span class="highlight">Albanien</span>”. Mit Besonderer Berucksichtigung der <span class="highlight">Volkskunde, Geschichte und Sozialgeschichte</span>, <span class="highlight">Kittsee, Austri</span>, <span class="highlight">22 dhe 23 Nëntor 1984</span></li>
+        <li>Sympozium “<span class="highlight">Kosturi, Qyteti, Liqeni dhe Monumentet</span>”, <span class="highlight">Kostur</span>, <span class="highlight">27.9-2.10. 1987</span></li>
+        <li><span class="highlight">University of Minnesota (USA)</span>, “<span class="highlight">An Unknown Territory: The Art and Architecture of Albania in a Balkan Context</span>”, <span class="highlight">Minneapolis</span>, <span class="highlight">14-17 Prill 1994</span></li>
+        <li><span class="highlight">AIESEE</span>, <span class="highlight">Septième Congres International d’Étude du Sud-Est Européen</span>, <span class="highlight">Thessalonique</span>, <span class="highlight">29.8.-4.9. 1994</span></li>
+        <li><span class="highlight">Australian Institute of Macedonian Studies</span>, <span class="highlight">Third International Conference Byzantine Macedonia</span>, <span class="highlight">Melbourne, Australia</span>, <span class="highlight">10-15 Korrik 1995</span></li>
+        <li>Sympozium “<span class="highlight">Ndërhyrjet arkitektonike në Qendrat Historike të Qyteteve</span>”, <span class="highlight">Veria-Greqi</span>, <span class="highlight">2-3 Shtator 1995</span></li>
+        <li><span class="highlight">Institut Français d’Études Anatolienne</span>, Université Technique d’Istanbul, “<span class="highlight">La Maison Ottomane, origine, typologie, aires de diffusion</span>”, <span class="highlight">Istanbul</span>, <span class="highlight">19-20 Prill 1996</span></li>
+        <li><span class="highlight">Instituti i Studimeve Maqedone</span>, Simpozium “<span class="highlight">Voskopoja</span>”, <span class="highlight">Selanik</span>, <span class="highlight">31.10.-1.11. 1997</span></li>
+        <li>Sympozium “<span class="highlight">Druri në konstruksion - teknologjitë e reja dhe të vjetra</span>”, <span class="highlight">Selanik</span>, <span class="highlight">27-28.2. 1997</span></li>
+        <li>Sympozium “<span class="highlight">Arkitektura Tradicionale Ballkanike</span>”, <span class="highlight">Selanik</span>, <span class="highlight">7-10 Nëntor 1997</span></li>
+        <li><span class="highlight">Simpoziumi i XI i Historisë dhe Artit</span> “<span class="highlight">Marrëdhënie dhe Transporte në Periudhën Paraindustriale</span>”, <span class="highlight">Monemvasia-Greqi</span>, <span class="highlight">23-26 Korrik 1998</span></li>
+        <li><span class="highlight">Takimi i tretë shkencor</span>, <span class="highlight">Drama</span>, <span class="highlight">1998</span></li>
+        <li><span class="highlight">TEE</span>, <span class="highlight">Simpozium “Restaurimi dhe ripërdorimi i Ndërtesave Historike dhe i Qyteteve gjatë shekujve 18-20”</span>, <span class="highlight">Selanik</span>, <span class="highlight">1999</span></li>
+        <li><span class="highlight">Simpoziumi Ndërkombëtar</span> “<span class="highlight">2000 Vjet Art dhe Kulturë Kishtare në Shqipëri</span>”, <span class="highlight">Tiranë</span>, <span class="highlight">16-18 nëntor 2000</span></li>
+        <li>Sympoziumi “<span class="highlight">Ndërhyrje të përmbajtura dhe mbrojtja e ndërtesave historike</span>”, <span class="highlight">Selanik</span>, <span class="highlight">2000</span></li>
+        <li><span class="highlight">Konferenca Ndërkombëtare</span> “<span class="highlight">Edukimi në vendet kufitare</span>”, <span class="highlight">Follorinë</span>, <span class="highlight">2012</span></li>
+        <li><span class="highlight">Takimi shkencor</span> “<span class="highlight">Rijetëzimi i Trashëgimisë Kulturore, potenciale dhe sfida</span>”, <span class="highlight">Tiranë</span>, <span class="highlight">2014</span></li>
+        <li><span class="highlight">Simpoziumi ndërkombëtar</span> “<span class="highlight">Kultura dhe hapësira në Ballkan</span>”, <span class="highlight">Selanik</span>, <span class="highlight">2014</span></li>
+        <li><span class="highlight">Konferenca ndërkombëtare shkencore</span> “<span class="highlight">50 Vjet Studim dhe Restaurim i Trashëgimisë kulturore Shqiptare</span>”, <span class="highlight">Tiranë</span>, <span class="highlight">22-23 tetor 2015</span></li>
+        <li>Leksione me temë mbi <span class="highlight">Arkitekturën Popullore dhe kriteret e mbrojtjes dhe të restaurimit të tyre në Shqipëri</span>, <span class="highlight">Helsinki-Finlandë, 1986</span>, <span class="highlight">Marburg-Gjermani, 1988</span></li>
+      </ol>
+    </section>
+
+    <!-- Restoration Projects -->
+    <section>
+      <h2 class="text-3xl font-semibold text-blue-800 mb-6">Veprimtaria Projektuese, Mbikqyrëse dhe Zbatuese</h2>
+      <ol class="text-gray-700">
+        <li>Mbi <span class="highlight">30 projekte restaurimi dhe zbatimi</span> gjatë periudhës <span class="highlight">1962-1991</span></li>
+        <li>Bashkëpunim në <span class="highlight">14 projekte restaurimi dhe konsolidimi</span> në manastiret e <span class="highlight">Malit të Shenjtë-Greqi</span> (Ivironit, Stavronikitës dhe Pantokratorit)</li>
+        <li>Bashkëpunim në projektin e restaurimit dhe rifunksionimit të <span class="highlight">Zonës së Mbrojtur të Laladikas</span> të <span class="highlight">Selanikut-Greqi</span></li>
+        <li>Bashkëpunim në projektin e restaurimit të njësisë urbanistike të <span class="highlight">Mitropolisë</span> së <span class="highlight">Selanikut-Greqi</span></li>
+        <li>Bashkëpunim në projektin e restaurimit të njësisë urbanistike të <span class="highlight">Manastirit Vlatadhon</span> në <span class="highlight">Zonën e Mbrojtur të Ano Polit</span> të <span class="highlight">Selanikut-Greqi</span></li>
+        <li>Drejtimi i punimeve të restaurimit dhe modifikimi i projektit të restaurimit të kishës së <span class="highlight">Shën Panteleimonit</span> të <span class="highlight">Selanikut-Greqi</span> (I lauruar me çmim nga <span class="highlight">Europa Nostra</span>)</li>
+        <li>Projekti i fazës së parë të restaurimit dhe konsolidimit të kishës së <span class="highlight">Osios David</span> të <span class="highlight">Selanikut-Greqi</span></li>
+        <li>Projekti i restaurimit dhe konsolidimit të kishës së <span class="highlight">Shën Zaharias</span> në <span class="highlight">Gramo të Kosturit-Greqi</span></li>
+        <li>Projekti dhe drejtimi i punimeve të restaurimit të monumentit “<span class="highlight">Varri i Hortaxhit</span>” në <span class="highlight">Rotondën e Selanikut-Greqi</span></li>
+        <li>Projekti i restaurimit të banesës <span class="highlight">Monument Kulture</span>, në rrugën <span class="highlight">Meleniku 14</span>, <span class="highlight">Selanik-Greqi</span></li>
+        <li>Projekti i restaurimit të banesës <span class="highlight">Monument Kulture</span>, në rrugën <span class="highlight">Velisariu 48</span>, <span class="highlight">Selanik-Greqi</span></li>
+        <li>Projekti i restaurimit të xhamisë së <span class="highlight">Hamza Beut</span>, <span class="highlight">Alkazar, Selanik-Greqi</span></li>
+        <li>Projekti i restaurimit të <span class="highlight">banjave bizantine</span>, <span class="highlight">Langadha-Greqi</span></li>
+        <li>Supervizimi i punimeve të restaurimit në kishën e <span class="highlight">Manastirit të Shën Kozmait</span> në <span class="highlight">Kolkondas të Fierit</span></li>
+        <li>Projekti dhe supervizimi i punimeve të restaurimit në kishën e <span class="highlight">Shën Marisë</span> së <span class="highlight">Leusës të Përmetit</span></li>
+        <li>Projekti i restaurimit dhe konsolidimit dhe supervizimi i punimeve të restaurimit të kishës <span class="highlight">Fjetja e Shën Marisë</span> në <span class="highlight">Zervat të Gjirokastrës</span></li>
+        <li>Projekti i restaurimit dhe konsolidimit dhe supervizimi i punimeve të restaurimit të kishës së <span class="highlight">Taksiarkeve</span> në <span class="highlight">Bodrishtë të Gjirokastrës</span></li>
+        <li>Projekti i restaurimit dhe konsolidimit dhe supervizimi i punimeve të restaurimit të manastirit të <span class="highlight">Shën Gjergjit</span> në <span class="highlight">Çukë të Sarandës</span></li>
+        <li>Projekti i restaurimit dhe konsolidimit dhe supervizimi i punimeve të restaurimit të kishës së manastirit të <span class="highlight">Cepos</span>, <span class="highlight">Gjirokastër</span></li>
+        <li>Projekti i restaurimit dhe konsolidimit dhe supervizimi i punimeve të restaurimit të kishës së manastirit të <span class="highlight">Nivanit</span></li>
+        <li>Projekti i restaurimit dhe konsolidimit dhe supervizimi i punimeve të restaurimit të <span class="highlight">konakëve dhe pareklisit të Shën Kozmait</span> në manastirin e <span class="highlight">Shën Kozmait në Kolkondas</span></li>
+        <li>Projekti i restaurimit dhe konsolidimit dhe supervizimi i punimeve të restaurimit të manastirit të <span class="highlight">Shën Marisë</span> në <span class="highlight">Kakome të Sarandës</span></li>
+        <li>Projekti i restaurimit dhe konsolidimit dhe supervizimi i punimeve të restaurimit të kishës së <span class="highlight">Shën Marisë</span> në <span class="highlight">Konckë të Gjirokastrës</span></li>
+        <li>Projekti i restaurimit i fazës <span class="highlight">I dhe II të Amfiteatrit të Durrësit</span></li>
+        <li>Konsulent i projektit të restaurimit dhe supervizimi i punimeve të restaurimit të <span class="highlight">Pazarit të Vjetër</span> të Qytetit të <span class="highlight">Korçës</span></li>
+        <li>Konsulent i studimit dhe projektit të rivitalizimit të fshatrave turistike të <span class="highlight">Bregdetit (Dhërmi e Vuno)</span></li>
+        <li>Projekti i restaurimit dhe konsolidimit të manastirit të <span class="highlight">Shën Prodhromit</span> në <span class="highlight">Voskopojë</span></li>
+        <li>Projekti i restaurimit dhe konsolidimit të kishës së <span class="highlight">Shën e Premtes</span> në <span class="highlight">Çetë të Kavajës</span></li>
+        <li>Modifikimi i projektit dhe realizimi i ndërhyrjeve restauruese në kishën e <span class="highlight">Shën Marisë</span> së <span class="highlight">Labovës së Kryqit, Gjirokastër</span></li>
+        <li>Modifikimi i projektit dhe realizimi i ndërhyrjeve restauruese në kishën e <span class="highlight">Shën Marisë</span> së <span class="highlight">Labovës së Kryqit, Gjirokastër</span></li>
+        <li>Modifikimi i projektit dhe realizimi i ndërhyrjeve restauruese në kishën e <span class="highlight">Shën Marisë</span> së <span class="highlight">Peshkëpisë së Sipërme, Gjirokastër</span></li>
+        <li>Modifikimi i projektit dhe realizimi i ndërhyrjeve restauruese në kishën e manastirit të <span class="highlight">Shën Nikollës</span> në <span class="highlight">Mesopotam, Sarandë</span></li>
+        <li>Projekti dhe zbatimi i punimeve për ringritjen e <span class="highlight">Kullës C</span> të mureve rrethuese të <span class="highlight">Durrësit</span></li>
+      </ol>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-blue-800 text-white py-6">
+    <div class="max-w-6xl mx-auto px-6 text-center">
+      <p>© 2025 Pirro Thomo. Të gjitha të drejtat e rezervuara.</p>
+    </div>
+  </footer>
+</body>
+</html>
