@@ -1,43 +1,4 @@
-<script type="text/javascript">
-        var gk_isXlsx = false;
-        var gk_xlsxFileLookup = {};
-        var gk_fileData = {};
-        function filledCell(cell) {
-          return cell !== '' && cell != null;
-        }
-        function loadFileData(filename) {
-        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-            try {
-                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
-
-                // Convert sheet to JSON to filter blank rows
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-                // Filter out blank rows (rows where all cells are empty, null, or undefined)
-                var filteredData = jsonData.filter(row => row.some(filledCell));
-
-                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
-                var headerRowIndex = filteredData.findIndex((row, index) =>
-                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-                );
-                // Fallback
-                if (headerRowIndex === -1 || headerRowIndex > 25) {
-                  headerRowIndex = 0;
-                }
-
-                // Convert filtered JSON back to CSV
-                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
-                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-                return csv;
-            } catch (e) {
-                console.error(e);
-                return "";
-            }
-        }
-        return gk_fileData[filename] || "";
-        }
-        </script><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="sq">
 <head>
   <meta charset="UTF-8">
@@ -50,6 +11,7 @@
     }
     section {
       margin-bottom: 4rem;
+      scroll-margin-top: 4rem;
     }
     ol {
       padding-left: 2rem;
@@ -61,6 +23,28 @@
     .highlight {
       font-weight: 600;
       color: #1e40af;
+    }
+    a.download-link {
+      display: inline-block;
+      margin-top: 0.25rem;
+      font-size: 0.85rem;
+      color: #2563eb;
+      text-decoration: underline;
+    }
+    a.download-link:hover {
+      color: #1d4ed8;
+    }
+    .sub-list {
+      margin-top: 0.5rem;
+      padding-left: 1.5rem;
+      list-style-type: disc;
+    }
+    .sub-list li {
+      margin-bottom: 0.4rem;
+      font-size: 0.95rem;
+    }
+    nav a {
+      transition: background-color 0.2s;
     }
   </style>
 </head>
@@ -74,10 +58,20 @@
     </div>
   </header>
 
+  <!-- Navigation Bar -->
+  <nav class="bg-blue-900 sticky top-0 z-50 shadow-md">
+    <div class="max-w-6xl mx-auto px-6 flex flex-wrap justify-center gap-1 py-2">
+      <a href="#botime" class="text-white text-sm px-4 py-2 rounded hover:bg-blue-700">Botime</a>
+      <a href="#simpoziume" class="text-white text-sm px-4 py-2 rounded hover:bg-blue-700">Simpoziume</a>
+      <a href="#projekte" class="text-white text-sm px-4 py-2 rounded hover:bg-blue-700">Projekte</a>
+      <a href="#studime" class="text-white text-sm px-4 py-2 rounded hover:bg-blue-700">Studime dhe Raporte</a>
+    </div>
+  </nav>
+
   <!-- Main Content -->
   <main class="max-w-6xl mx-auto px-6 py-10">
     <!-- Scholarly Works -->
-    <section>
+    <section id="botime">
       <h2 class="text-3xl font-semibold text-blue-800 mb-6">Veprimtaria Studimore-Shkencore dhe Botuese</h2>
       <ol class="text-gray-700" style="list-style-type: none; counter-reset: item;">
         <li style="counter-increment: item;"><span class="highlight" style="font-weight: 600;">1.</span> Studime për <span class="highlight">gjurmimin, vlerësimin dhe vënien në mbrojtje të monumenteve të kulturës</span> (<span class="highlight">banesa qytetare e fshatare, ansamble dhe Qendra Historike, kisha bizantine dhe pasbizantine</span>)</li>
@@ -109,7 +103,7 @@
     </section>
 
     <!-- Symposium Participations -->
-    <section>
+    <section id="simpoziume">
       <h2 class="text-3xl font-semibold text-blue-800 mb-6">Pjesëmarrja në Simpoziume</h2>
       <p class="text-gray-700 mb-4">Pjesëmarrje me kumtesa shkencore në shumë simpoziume kombëtare dhe ndërkombëtare, nga të cilat më kryesoret janë:</p>
       <ol class="text-gray-700" style="list-style-type: none; counter-reset: item;">
@@ -138,7 +132,7 @@
     </section>
 
     <!-- Restoration Projects -->
-    <section>
+    <section id="projekte">
       <h2 class="text-3xl font-semibold text-blue-800 mb-6">Veprimtaria Projektuese, Mbikqyrëse dhe Zbatuese</h2>
       <ol class="text-gray-700" style="list-style-type: none; counter-reset: item;">
         <li style="counter-increment: item;"><span class="highlight" style="font-weight: 600;">1.</span> Mbi <span class="highlight">30 projekte restaurimi dhe zbatimi</span> gjate periudhës <span class="highlight">1962-1991</span></li>
@@ -173,6 +167,21 @@
         <li style="counter-increment: item;"><span class="highlight" style="font-weight: 600;">30.</span> Modifikimi i projektit dhe realizimi i ndërhyrjeve restauruese në kishën e <span class="highlight">Shën Marisë</span> së <span class="highlight">Peshkëpisë së Sipërme, Gjirokastër</span></li>
         <li style="counter-increment: item;"><span class="highlight" style="font-weight: 600;">31.</span> Modifikimi i projektit dhe realizimi i ndërhyrjeve restauruese në kishën e manastirit të <span class="highlight">Shën Nikollës</span> në <span class="highlight">Mesopotam, Sarandw</span></li>
         <li style="counter-increment: item;"><span class="highlight" style="font-weight: 600;">32.</span> Projekti dhe zbatimi i punimeve për ringritjen e kullës C të mureve rrethuese të <span class="highlight">Durrësit</span>.</li>
+      </ol>
+    </section>
+
+    <!-- Studies and Reports -->
+    <section id="studime">
+      <h2 class="text-3xl font-semibold text-blue-800 mb-6">Studime dhe Raporte</h2>
+      <ol class="text-gray-700" style="list-style-type: none;">
+        <li><a class="download-link" href="papers/NDARJA PARAPRAKE E KRAHINAVE.pdf">📄 Ndarja paraprake e krahinave</a></li>
+        <li><a class="download-link" href="papers/KRAHINA E CAMERISE.pdf">📄 Krahina e Çamërisë</a></li>
+        <li><a class="download-link" href="papers/KRAHINA E DEVOLLIT TE POSHTEM.pdf">📄 Krahina e Devollit të Poshtëm</a></li>
+        <li><a class="download-link" href="papers/KRAHINA E DEVOLLIT TE SIPERM.pdf">📄 Krahina e Devollit të Sipërm</a></li>
+        <li><a class="download-link" href="papers/KRAHINA E DROPULLIT.pdf">📄 Krahina e Dropullit</a></li>
+        <li><a class="download-link" href="papers/KRAHINA E POGRADECIT, MOKER.pdf">📄 Krahina e Pogradecit, Mokër</a></li>
+        <li><a class="download-link" href="papers/KRITERET E GJURMIMIT TE VENDBANIMEVE E BANESES.pdf">📄 Kriteret e gjurmimit të vendbanimeve e banesës</a></li>
+        <li><a class="download-link" href="papers/MONUMENTET SHQIPERIA E JUGUT.pdf">📄 Monumentet, Shqipëria e Jugut</a></li>
       </ol>
     </section>
   </main>
